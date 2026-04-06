@@ -3,84 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post Item | Campus Navigator</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Report Item | CampusNavigator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
-        /* Specific styles for the file upload area */
-        .file-upload-wrapper {
-            border: 2px dashed #d2d2d7;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            background: #f5f5f7;
-            transition: all 0.3s ease;
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #fbfbfd; 
+            color: #1d1d1f; 
+            overflow-x: hidden;
+        }
+
+        /* 1. Base Input Styling */
+        .form-input {
+            @apply w-full px-6 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl outline-none transition-all duration-300 text-sm font-medium;
+        }
+
+        .form-input:focus {
+            @apply bg-white ring-4 ring-blue-500/5 border-blue-500/20;
+        }
+
+        /* 2. Custom Date Picker UI Fixes */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
             cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
         }
-        .file-upload-wrapper:hover {
-            border-color: #0071e3;
-            background: #ffffff;
+
+        .date-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
-        #filePreview {
-            max-width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-            border: 1px solid #d2d2d7;
+
+        .date-input-container::after {
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%239ca3af" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>');
+            position: absolute;
+            right: 20px;
+            pointer-events: none;
+            opacity: 0.6;
         }
-        input[type="file"] {
-            font-size: 0.8rem;
-            color: #86868b;
+
+        /* 3. Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.02);
+        }
+        
+        .label-text {
+            @apply text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 ml-1 mb-2 block;
+        }
+
+        .bg-animate {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.06) 0%, transparent 50%);
+            filter: blur(80px);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-    <nav>
-        <div class="nav-brand" onclick="location.href='index.html'" style="cursor:pointer">CampusNavigator</div>
-        <a href="index.html" style="color: #86868b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">Cancel</a>
+    <div class="bg-animate"></div>
+
+    <nav class="h-20 flex items-center justify-between px-[8%] sticky top-0 z-50">
+        <div class="font-extrabold text-xl tracking-tighter text-blue-600">CampusNavigator</div>
+        <a href="index.html" class="group flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-all">
+            <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            Cancel
+        </a>
     </nav>
 
-    <div class="container">
-        <div class="form-card" id="formContent">
-            <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 32px; letter-spacing: -0.5px;">Report an Item</h2>
+    <main class="flex-grow flex items-center justify-center p-6 pb-20">
+        <div id="form-card" class="w-full max-w-xl glass-card rounded-[48px] p-10 md:p-14 relative overflow-hidden">
             
-            <form id="addForm">
-                <div class="form-group">
-                    <label>What did you find/lose?</label>
-                    <input type="text" id="itemName" placeholder="e.g., iPhone 15, Blue Backpack" required>
-                </div>
+            <header class="mb-12">
+                <div class="w-12 h-1.5 bg-blue-600 rounded-full mb-6"></div>
+                <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-slate-900">Report an Item</h1>
+                <p class="text-gray-400 text-base font-medium">Provide details to help our campus community stay connected.</p>
+            </header>
 
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="itemDesc" rows="3" placeholder="Provide details like location, brand, or unique marks..." required></textarea>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="form-group">
-                        <label>Type</label>
-                        <select id="itemType">
-                            <option value="Lost">Lost</option>
-                            <option value="Found">Found</option>
-                        </select>
+            <form id="reportForm" class="space-y-10">
+                
+                <div class="space-y-3">
+                    <span class="label-text">Entry Type</span>
+                    <div class="flex p-1.5 bg-gray-100/50 rounded-[22px] w-full max-w-[240px]">
+                        <button type="button" onclick="setMode('Lost')" id="btnLost" class="flex-1 py-3 rounded-[18px] text-[11px] font-bold uppercase tracking-widest transition-all bg-white text-black shadow-sm">Lost</button>
+                        <button type="button" onclick="setMode('Found')" id="btnFound" class="flex-1 py-3 rounded-[18px] text-[11px] font-bold uppercase tracking-widest transition-all text-gray-400">Found</button>
+                        <input type="hidden" id="itemType" value="Lost">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Item Image (Optional)</label>
-                        <div class="file-upload-wrapper">
-                            <input type="file" id="itemFile" accept="image/*">
-                            <img id="filePreview" alt="Preview">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col">
+                        <label class="label-text">Item Name</label>
+                        <input type="text" id="itemName" placeholder="e.g. iPhone 15 Pro" class="form-input placeholder:text-gray-300" required>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="label-text">Date Found/Lost</label>
+                        <div class="date-input-container">
+                            <input type="date" id="itemDate" class="form-input text-gray-400 focus:text-black" required>
                         </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; border: none; cursor: pointer; font-size: 1rem; margin-top: 20px; font-weight: 600;">Post to Feed</button>
+                <div class="flex flex-col">
+                    <label class="label-text">Detailed Description</label>
+                    <textarea id="itemDesc" rows="4" placeholder="Describe unique marks, exact location, or specific brands..." class="form-input resize-none placeholder:text-gray-300" required></textarea>
+                </div>
+
+                <div class="flex flex-col space-y-3">
+                    <label class="label-text">Visual Evidence</label>
+                    <div id="drop-zone" class="relative group h-56 border-2 border-dashed border-gray-100 rounded-[32px] flex flex-col items-center justify-center bg-gray-50/30 hover:bg-white hover:border-blue-400/30 transition-all duration-500 cursor-pointer overflow-hidden">
+                        <input type="file" id="fileInput" class="hidden" accept="image/*">
+                        
+                        <div id="upload-prompt" class="flex flex-col items-center transition-all group-hover:scale-105">
+                            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 border border-gray-50">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <p class="text-[11px] font-extrabold uppercase tracking-widest text-blue-600">Tap to upload photo</p>
+                        </div>
+
+                        <img id="preview" class="absolute inset-0 w-full h-full object-cover hidden">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-6 bg-blue-600 text-white rounded-[28px] font-bold text-sm shadow-xl shadow-blue-500/25 hover:bg-blue-700 hover:shadow-blue-500/40 transition-all duration-500 transform active:scale-[0.98]">
+                    Post to Live Feed
+                </button>
+
             </form>
         </div>
-    </div>
+    </main>
 
-    <script src="script.js"></script>
+    <script src="add-script.js"></script>
 </body>
 </html>

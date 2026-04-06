@@ -1,59 +1,115 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+/* Custom properties for a consistent Apple-like palette */
+:root {
+    --apple-blue: #0071e3;
+    --apple-gray: #86868b;
+    --apple-bg: #fbfbfd;
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+    --hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
 
-body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+/* Smooth scrolling for anchor links */
+html {
     scroll-behavior: smooth;
 }
 
-.nav-brand {
-    background: linear-gradient(to right, #0071e3, #2997ff);
+body {
+    background-color: var(--apple-bg);
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+}
+
+/* Navigation Blur Effect */
+nav {
+    transition: all 0.4s ease;
+}
+
+/* Hero Typography */
+#heroText h1 {
+    letter-spacing: -0.04em;
+}
+
+/* Floating Notification Visual */
+#heroVisual {
+    perspective: 1000px;
+}
+
+#heroVisual > div {
+    transition: transform 0.6s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Stats Styling */
+.stat-item h2 {
+    letter-spacing: -0.03em;
+    background: linear-gradient(180deg, #1d1d1f 0%, #434345 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.filter-btn.active {
-    background: white;
-    color: #0071e3;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+/* Filter Buttons */
+.filter-btn {
+    color: var(--apple-gray);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card {
-    background: white;
-    border-radius: 24px;
-    border: 1px solid #f2f2f7;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: hidden;
+.filter-btn:hover:not(.active) {
+    color: #1d1d1f;
 }
 
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.08);
-    border-color: #0071e3;
+/* Card Design & Micro-interactions */
+#itemsGrid .card {
+    transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1), 
+                box-shadow 0.4s cubic-bezier(0.2, 0, 0, 1);
+    background: #ffffff;
 }
 
-.badge {
-    padding: 6px 12px;
-    border-radius: 100px;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+#itemsGrid .card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--hover-shadow);
 }
 
-.badge-lost { background: #fff1f0; color: #ff4d4f; }
-.badge-found { background: #f6ffed; color: #52c41a; }
+/* Badge Refinement */
+.badge-lost {
+    background: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+}
 
-.btn-primary {
+.badge-found {
+    background: rgba(52, 199, 89, 0.1);
+    color: #34c759;
+}
+
+/* Search Input Styling */
+#searchInput {
     transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
-.btn-primary:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0, 113, 227, 0.2);
+#searchInput:focus {
+    width: 300px;
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #f1f1f1; }
-::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #86868b; }
+/* Custom Scrollbar for a cleaner look */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--apple-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d2d2d7;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #86868b;
+}
+
+/* Animation Classes */
+.gsap-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+}
