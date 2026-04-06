@@ -1,119 +1,170 @@
-// --- INITIALIZATION ---
+const STORAGE_KEY = 'campus_navigator_items';
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Check which page we are on
+    // Register GSAP Plugin
+    gsap.registerPlugin(ScrollTrigger);
+
     if (document.getElementById('itemsGrid')) {
         renderItems();
-        animateEntrance();
+        runEntranceAnimations();
     }
 
     if (document.getElementById('addForm')) {
-        setupFormHandler();
-        gsap.from("#formContainer", { opacity: 0, y: 30, duration: 0.8, ease: "power4.out" });
+        initFormLogic();
     }
 
-    // Live search listener
     const searchInput = document.getElementById('searchBar');
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            renderItems(e.target.value);
-        });
+        searchInput.addEventListener('input', (e) => renderItems(e.target.value));
     }
 });
 
-// --- CORE FUNCTIONS ---
+// --- ENTRANCE ANIMATIONS ---
+function runEntranceAnimations() {
+    const tl = gsap.timeline();
 
-function getItems() {
-    const data = localStorage.getItem('campus_items');
-    return data ? JSON.parse(data) : [];
+    tl.from("nav", { y: -100, opacity: 0, duration: 1, ease: "expo.out" })
+      .from("#heroText h1", { y: 60, opacity: 0, duration: 1, ease: "power4.out" }, "-=0.5")
+      .from("#heroText p", { y: 30, opacity: 0, duration: 1, ease: "power4.out" }, "-=0.7")
+      .from("#heroText div", { y: 20, opacity: 0, duration: 1, ease: "power4.out" }, "-=0.8")
+      .from("#heroVisual", { scale: 0.8, opacity: 0, duration: 1.5, ease: "expo.out" }, "-=1");
+
+    // Floating animation for hero visual
+    gsap.to("#heroVisual", {
+        y: 20,
+        repeat: -1,
+        yoyo: true,
+        duration: 3,
+        ease: "sine.inOut"
+    });
+
+    // Animate Stats on Scroll
+    gsap.from(".stat-card", {
+        scrollTrigger: {
+            trigger: ".stat-card",
+            start: "top 90%",
+        },
+        y: 40,
+        opacity: 0,
+        stagger: 0.2,
+        duration: 1,
+        ease: "power3.out"
+    });
 }
 
-function saveItem(item) {
-    const items = getItems();
-    items.unshift(item); // Add to the beginning of the list
-    localStorage.setItem('campus_items', JSON.stringify(items));
+// --- CORE DATA LOGIC ---
+function getLocalData() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
 }
 
-function deleteItem(id) {
-    if (confirm("Are you sure you want to remove this report?")) {
-        let items = getItems();
-        items = items.filter(item => item.id !== id);
-        localStorage.setItem('campus_items', JSON.stringify(items));
-        renderItems();
-    }
+function saveLocalData(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
-// --- RENDERING ---
-
-function renderItems(searchTerm = '', filterType = 'All') {
+function renderItems(search = '', filter = 'All') {
     const grid = document.getElementById('itemsGrid');
     if (!grid) return;
 
-    let items = getItems();
-
-    // Filter Logic
-    if (searchTerm) {
-        items = items.filter(i => i.name.toLowerCase().includes(searchTerm.toLowerCase()));
-    }
-    if (filterType !== 'All') {
-        items = items.filter(i => i.type === filterType);
-    }
+    let items = getLocalData();
+    if (search) items = items.filter(i => i.name.toLowerCase().includes(search.toLowerCase()));
+    if (filter !== 'All') items = items.filter(i => i.type === filter);
 
     if (items.length === 0) {
-        grid.innerHTML = `<div class="empty-state">No items found matching your criteria.</div>`;
+        grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-40 font-medium">No items reported in this category.</div>`;
         return;
     }
 
     grid.innerHTML = items.map(item => `
-        <div class="card" data-type="${item.type}">
-            <img src="${item.image || 'https://images.unsplash.com/photo-1534536281715-e28d76689b4d?q=80&w=1000&auto=format&fit=crop'}" class="card-img" alt="${item.name}">
-            <div class="card-content">
-                <span class="badge ${item.type === 'Lost' ? 'badge-lost' : 'badge-found'}">${item.type}</span>
-                <h3 class="card-title">${item.name}</h3>
-                <p class="card-desc">${item.description}</p>
-                <p class="card-date">${item.date}</p>
-                <button class="delete-btn" onclick="deleteItem(${item.id})">Remove Post</button>
+        <div class="card flex flex-col">
+            <div class="relative overflow-hidden h-52">
+                <img src="${item.image || 'https://images.unsplash.com/photo-1521110604737-16d51347a4ff?q=80&w=1000'}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                <div class="absolute top-4 left-4">
+                    <span class="badge ${item.type === 'Lost' ? 'badge-lost' : 'badge-found'}">${item.type}</span>
+                </div>
+            </div>
+            <div class="p-6 flex-grow">
+                <h3 class="font-bold text-lg mb-2">${item.name}</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-2">${item.description}</p>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                    <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">${item.date}</span>
+                    <button class="text-red-400 text-[10px] font-bold uppercase tracking-widest hover:text-red-600 transition-colors" onclick="removeItem(${item.id})">Remove</button>
+                </div>
             </div>
         </div>
     `).join('');
-    
-    // Smooth fade in for cards
-    gsap.from(".card", { opacity: 0, y: 20, stagger: 0.05, duration: 0.5 });
+
+    // Animate Cards as they appear
+    gsap.from(".card", {
+        opacity: 0,
+        y: 50,
+        stagger: 0.1,
+        duration: 0.8,
+        ease: "power3.out"
+    });
 }
 
-// --- HANDLERS ---
+function handleFilter(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderItems('', type);
+}
 
-function setupFormHandler() {
+function removeItem(id) {
+    if (confirm("Permanently remove this report?")) {
+        let items = getLocalData();
+        items = items.filter(i => i.id !== id);
+        saveLocalData(items);
+        renderItems();
+    }
+}
+
+// --- FORM LOGIC (Compression for add.html) ---
+function initFormLogic() {
     const form = document.getElementById('addForm');
+    const fileInput = document.getElementById('itemFile');
+    const previewImg = document.getElementById('filePreview');
+    let compressedImageBase64 = null;
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const tempImg = new Image();
+                tempImg.src = event.target.result;
+                tempImg.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400;
+                    let width = tempImg.width;
+                    let height = tempImg.height;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(tempImg, 0, 0, width, height);
+                    compressedImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    previewImg.src = compressedImageBase64;
+                    previewImg.style.display = 'block';
+                };
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-
         const newItem = {
             id: Date.now(),
             name: document.getElementById('itemName').value,
             description: document.getElementById('itemDesc').value,
             type: document.getElementById('itemType').value,
-            image: document.getElementById('itemImg').value,
+            image: compressedImageBase64,
             date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         };
-
-        saveItem(newItem);
-        
-        // Success animation then redirect
-        gsap.to("#formContainer", { opacity: 0, scale: 0.95, duration: 0.4, onComplete: () => {
-            window.location.href = 'index.html';
-        }});
+        const currentItems = getLocalData();
+        currentItems.unshift(newItem);
+        saveLocalData(currentItems);
+        window.location.href = 'index.html';
     });
-}
-
-function filterItems(type, btn) {
-    // Update active UI
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    renderItems('', type);
-}
-
-function animateEntrance() {
-    gsap.from("nav", { y: -60, duration: 1, ease: "expo.out" });
-    gsap.from("header h1", { opacity: 0, x: -30, duration: 0.8, delay: 0.2 });
 }

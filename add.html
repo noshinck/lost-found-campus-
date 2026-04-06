@@ -3,46 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Item | Campus Navigator</title>
+    <title>Post Item | Campus Navigator</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* Specific styles for the file upload area */
+        .file-upload-wrapper {
+            border: 2px dashed #d2d2d7;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            background: #f5f5f7;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .file-upload-wrapper:hover {
+            border-color: #0071e3;
+            background: #ffffff;
+        }
+        #filePreview {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            border: 1px solid #d2d2d7;
+        }
+        input[type="file"] {
+            font-size: 0.8rem;
+            color: #86868b;
+        }
+    </style>
 </head>
 <body>
 
     <nav>
         <div class="nav-brand" onclick="location.href='index.html'" style="cursor:pointer">CampusNavigator</div>
-        <a href="index.html" style="font-size: 0.9rem; color: #86868b; text-decoration: none;">Cancel</a>
+        <a href="index.html" style="color: #86868b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">Cancel</a>
     </nav>
 
     <div class="container">
-        <div class="form-card" id="formContainer">
-            <h2 style="font-size: 1.5rem; margin-bottom: 25px; font-weight: 600;">Report an Item</h2>
+        <div class="form-card" id="formContent">
+            <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 32px; letter-spacing: -0.5px;">Report an Item</h2>
             
             <form id="addForm">
                 <div class="form-group">
                     <label>What did you find/lose?</label>
-                    <input type="text" id="itemName" placeholder="e.g. Blue Water Bottle" required>
+                    <input type="text" id="itemName" placeholder="e.g., iPhone 15, Blue Backpack" required>
                 </div>
 
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea id="itemDesc" rows="3" placeholder="Provide details like location or specific marks..." required></textarea>
+                    <textarea id="itemDesc" rows="3" placeholder="Provide details like location, brand, or unique marks..." required></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label>Type</label>
-                    <select id="itemType">
-                        <option value="Lost">Lost</option>
-                        <option value="Found">Found</option>
-                    </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="itemType">
+                            <option value="Lost">Lost</option>
+                            <option value="Found">Found</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Item Image (Optional)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="itemFile" accept="image/*">
+                            <img id="filePreview" alt="Preview">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Image URL (Optional)</label>
-                    <input type="url" id="itemImg" placeholder="https://example.com/image.jpg">
-                </div>
-
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; margin-top: 10px; border: none; cursor: pointer;">Post Item</button>
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; border: none; cursor: pointer; font-size: 1rem; margin-top: 20px; font-weight: 600;">Post to Feed</button>
             </form>
         </div>
     </div>
