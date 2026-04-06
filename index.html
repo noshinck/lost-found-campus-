@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found | Campus Navigator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">CampusNavigator</div>
+        <a href="add.html" class="btn-primary">+ Add Item</a>
+    </nav>
+
+    <main class="container">
+        <header class="mb-10">
+            <h1 class="text-4xl font-bold tracking-tight mb-2">Campus Feed</h1>
+            <p class="text-gray-500">Find what you lost, return what you found.</p>
+        </header>
+
+        <div class="controls">
+            <input type="text" id="searchBar" placeholder="Search for items (e.g. 'Keys', 'iPhone')...">
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="filterItems('All', this)">All</button>
+                <button class="filter-btn" onclick="filterItems('Lost', this)">Lost</button>
+                <button class="filter-btn" onclick="filterItems('Found', this)">Found</button>
+            </div>
+        </div>
+
+        <div id="itemsGrid">
+            </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
