@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Item | Campus Navigator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand" onclick="location.href='index.html'" style="cursor:pointer">CampusNavigator</div>
+        <a href="index.html" style="font-size: 0.9rem; color: #86868b; text-decoration: none;">Cancel</a>
+    </nav>
+
+    <div class="container">
+        <div class="form-card" id="formContainer">
+            <h2 style="font-size: 1.5rem; margin-bottom: 25px; font-weight: 600;">Report an Item</h2>
+            
+            <form id="addForm">
+                <div class="form-group">
+                    <label>What did you find/lose?</label>
+                    <input type="text" id="itemName" placeholder="e.g. Blue Water Bottle" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="itemDesc" rows="3" placeholder="Provide details like location or specific marks..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="itemType">
+                        <option value="Lost">Lost</option>
+                        <option value="Found">Found</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Image URL (Optional)</label>
+                    <input type="url" id="itemImg" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; margin-top: 10px; border: none; cursor: pointer;">Post Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
